@@ -36,7 +36,7 @@ This project implements an AI-powered chess game using multiple agents, natural 
 - **AI/ML Components**:
   - AutoGen for multi-agent orchestration
   - LangChain for RAG implementation
-  - OpenAI GPT-4 for strategic decision making
+  - Ollama with Llama3 for strategic decision making
   - Custom Chess Engine for position evaluation
 
 - **Libraries**:
@@ -44,7 +44,7 @@ This project implements an AI-powered chess game using multiple agents, natural 
   - ChromaDB: Vector store for chess knowledge
   - PyTorch: Neural network operations
   - Eventlet: Async operations
-  
+
 ## 🚀 Installation
 
 1. Clone the repository:
@@ -61,7 +61,7 @@ pip install -r requirements.txt
 1. Set up environment variables:
 ```bash
 cp .env.example .env
-# Edit .env and add your OpenAI API key
+# No API key needed as we're using local Ollama
 ```
 
 ## 💻 Usage

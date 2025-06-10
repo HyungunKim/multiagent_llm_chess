@@ -1,6 +1,6 @@
 [
     {
-        "model": "gpt-4o",
-        "api_key": "YOUR_API_KEY"
+        "model": "llama3",
+        "base_url": "http://localhost:11434"
     }
 ]
