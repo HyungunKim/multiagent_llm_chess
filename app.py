@@ -103,6 +103,7 @@ config_list = config_list_from_json(
 # Extract model names from config
 agent_model = config_list[0].get("agent_model", "llama3") if config_list else "llama3"
 embedding_model = config_list[0].get("embedding_model", "llama3") if config_list else "llama3"
+base_url = config_list[0].get("base_url", "http://localhost:8080/api/v1") if config_list else "http://localhost:8080/api/v1"
 
 llm_config = {
     "config_list": config_list,
@@ -897,7 +898,7 @@ Before EACH move:
 # Create player agents
 def agent_llm_config():
     print(llm_config)
-    return {"config_list": [{'model': agent_model}], "temperature": 0.7}  # , "max_new_tokens": 100},
+    return {"config_list": [{'model': agent_model, "base_url": base_url, "api_key": "ollama"}], "temperature": 0.7}  # , "max_new_tokens": 100},
 
 player_white = ConversableAgent(
     name="Player_White",
