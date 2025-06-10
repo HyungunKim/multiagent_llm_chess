@@ -13,9 +13,9 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 class ChessEngine:
-    def __init__(self, temperature: float = 0.7):
+    def __init__(self, temperature: float = 0.7, model_name: str = "llama3"):
         self.chat = Ollama(
-            model="llama3",
+            model=model_name,
             temperature=temperature
         )
         self.logger = logging.getLogger(__name__)

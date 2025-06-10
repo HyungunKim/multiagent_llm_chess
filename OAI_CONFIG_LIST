@@ -1,6 +1,8 @@
 [
     {
         "model": "llama3",
+        "agent_model": "qwen3:4b",
+        "embedding_model": "nomic-embed-text:v1.5",
         "base_url": "http://localhost:11434"
     }
 ]

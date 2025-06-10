@@ -64,6 +64,33 @@ cp .env.example .env
 # No API key needed as we're using local Ollama
 ```
 
+1. Configure model names (optional):
+```bash
+# Edit OAI_CONFIG_LIST to change the model names
+# Default configuration:
+[
+    {
+        "model": "llama3",         # Required by autogen
+        "agent_model": "llama3",    # Used for agent reasoning (chess moves)
+        "embedding_model": "llama3", # Used for embeddings in RAG system
+        "base_url": "http://localhost:11434"  # Ollama API endpoint
+    }
+]
+```
+
+You can use different models for agents and embeddings by changing the respective fields. For example:
+```bash
+# Example with different models:
+[
+    {
+        "model": "llama3",
+        "agent_model": "llama3:8b",    # Smaller model for faster responses
+        "embedding_model": "nomic-embed-text", # Specialized embedding model
+        "base_url": "http://localhost:11434"
+    }
+]
+```
+
 ## 💻 Usage
 
 1. Start the server:

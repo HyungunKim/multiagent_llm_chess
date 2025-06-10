@@ -93,13 +93,33 @@ load_dotenv()
 # No API key needed for Ollama as it's running locally
 logger.info("Using local Ollama for LLM functionality")
 
+config_list = config_list_from_json(
+    "OAI_CONFIG_LIST",
+    filter_dict={
+        "model": ["llama3"],  # Keep this for compatibility with autogen
+    },
+)
+# print(config_list)
+# Extract model names from config
+agent_model = config_list[0].get("agent_model", "llama3") if config_list else "llama3"
+embedding_model = config_list[0].get("embedding_model", "llama3") if config_list else "llama3"
+
+llm_config = {
+    "config_list": config_list,
+    "temperature": 0.7,
+}
+
+logger.info(f"Config list: {config_list}")
+logger.info(f"Using agent model: {agent_model}")
+logger.info(f"Using embedding model: {embedding_model}")
+
 # Initialize AI models
 def initialize_models():
     try:
         logger.info("Initializing AI models...")
 
         # Initialize Chess Engine with Ollama integration        
-        chess_engine = ChessEngine(temperature=0.7)
+        chess_engine = ChessEngine(temperature=0.7, model_name=agent_model)
 
         logger.info("AI models initialized successfully")
         return chess_engine
@@ -115,19 +135,7 @@ except Exception as e:
     logger.error(f"Failed to initialize chess engine: {str(e)}")
     raise
 
-config_list = config_list_from_json(
-    "OAI_CONFIG_LIST",
-    filter_dict={
-        "model": ["llama3"],
-    },
-)
 
-llm_config = {
-    "config_list": config_list,
-    "temperature": 0.7,
-}
-
-logger.info(f"Config list: {config_list}")
 
 # Chess knowledge base
 chess_knowledge = """
@@ -226,7 +234,7 @@ chess_knowledge = """
 """
 
 # Set up RAG system
-embeddings = OllamaEmbeddings(model="llama3")
+embeddings = OllamaEmbeddings(model=embedding_model)
 text_splitter = CharacterTextSplitter(chunk_size=1000, chunk_overlap=200)
 texts = text_splitter.split_text(chess_knowledge)
 docsearch = Chroma.from_texts(texts, embeddings, metadatas=[{"source": str(i)} for i in range(len(texts))])
@@ -236,7 +244,7 @@ retriever = docsearch.as_retriever(search_kwargs={"k": 3})
 
 # Set up the RetrievalQA
 qa = RetrievalQA.from_chain_type(
-    llm=Ollama(model="llama3"),
+    llm=Ollama(model=agent_model),
     chain_type="stuff",
     retriever=retriever
 )
@@ -887,16 +895,20 @@ Before EACH move:
 """
 
 # Create player agents
+def agent_llm_config():
+    print(llm_config)
+    return {"config_list": [{'model': agent_model}], "temperature": 0.7}  # , "max_new_tokens": 100},
+
 player_white = ConversableAgent(
     name="Player_White",
     system_message=white_player_system_message,
-    llm_config=llm_config,
+    llm_config=agent_llm_config()
 )
 
 player_black = ConversableAgent(
     name="Player_Black",
     system_message=black_player_system_message,
-    llm_config=llm_config,
+    llm_config=agent_llm_config(),
 )
 
 board_proxy = ConversableAgent(
@@ -915,7 +927,7 @@ commentator_agent = ConversableAgent(
     2. Strategic implications (pawn structure, piece placement)
     3. Position evaluation and potential plans
     4. Historical context of similar positions""",
-    llm_config=llm_config,
+    llm_config=agent_llm_config(),
     human_input_mode="NEVER"
 )
 
